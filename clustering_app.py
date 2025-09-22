@@ -51,21 +51,27 @@ st.write("データの最適なクラスタ数（グループ数）を評価し�
 with st.sidebar:
     st.header("1. データ準備")
     uploaded_file = st.file_uploader("CSVファイルをアップロード", type=["csv"])
+    
+    # dfとselected_colsを初期化
+    df = None
+    selected_cols = []
 
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
+        
+        # --- ここからが追加機能 ---
+        with st.expander("アップロードしたデータの中身を確認 プレビュー"):
+            st.dataframe(df.head())
+        # --- ここまでが追加機能 ---
+
         st.subheader("クラスタリングに使う列を選択")
         numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
-
-        # ユーザーがクラスタリングに使う列を選択
+        
         selected_cols = st.multiselect(
             "数値型の列から複数選択してください",
             options=numeric_cols,
-            default=numeric_cols[:min(len(numeric_cols), 3)] # デフォルトで最初の3列を選択
+            default=numeric_cols[:min(len(numeric_cols), 3)]
         )
-    else:
-        df = None
-        selected_cols = []
 
 # --- アプリ本体 ---
 if df is not None and selected_cols:
